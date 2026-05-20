@@ -23,7 +23,7 @@ if __name__ == '__main__':
     # ---------------------------------------------------------
     # Assuming run_pca.py is in the folder directly above src/ and results/
     RESULTS_DIR = CURRENT_DIR / 'results' 
-    CSV_FILE = RESULTS_DIR / 'global_10s_features.csv'
+    CSV_FILE = RESULTS_DIR / 'interval_features.csv'
     
     # 2. LOAD DATA
     # ---------------------------------------------------------
@@ -35,6 +35,18 @@ if __name__ == '__main__':
         sys.exit()
         
     epoch_df = pd.read_csv(CSV_FILE)
+    
+    target_metrics = [
+        "ECG_Rate_Mean",
+        'HRV_RMSSD',
+        'HRV_SDSD',
+        'HRV_HF',
+        "RSP_Rate_Mean",
+        'RRV_RMSSD',
+        "Pupil_Mean",
+    ]
+    epoch_df = epoch_df.loc[:, target_metrics]
+    
     print(f"Loaded {len(epoch_df)} epochs.")
     
     # 3. PRE-PCA CLEANING

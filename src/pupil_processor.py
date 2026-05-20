@@ -9,6 +9,7 @@ Created on Wed Apr 22 09:20:31 2026
 import numpy as np
 import pandas as pd
 from scipy.ndimage import binary_dilation
+import neurokit2 as nk
 
 def pupil_process(raw_pupil, sampling_rate, mad_multiplier=4.0, buffer_ms=100):
     """
@@ -16,6 +17,11 @@ def pupil_process(raw_pupil, sampling_rate, mad_multiplier=4.0, buffer_ms=100):
     Outputs 'honest' data (NaNs for blinks) plus Session-Normalized Metrics (Z-Score & Robust %Max).
     """
     pupil_series = pd.Series(raw_pupil).copy()
+    
+    # low pass filter to remove artifacts
+    pupil_series = pd.Series(nk.signal_filter(
+        signal=pupil_series, sampling_rate=sampling_rate,highcut=10, method="butterworth", order=3
+    ))
     
     # 1. Calculate Dynamic MAD Threshold
     median_val = pupil_series.median()
@@ -45,7 +51,7 @@ def pupil_process(raw_pupil, sampling_rate, mad_multiplier=4.0, buffer_ms=100):
     signals = pd.DataFrame({
         'Pupil_Raw': pupil_series,
         'Pupil_Clean': final_clean_pupil, 
-        'Pupil_Artifact': (~padded_mask).astype(int) 
+        'Pupil_Artifact': (padded_mask).astype(int) 
     })
     
     # --- 7. SESSION NORMALIZATIONS ---

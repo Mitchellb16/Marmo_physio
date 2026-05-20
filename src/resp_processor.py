@@ -35,6 +35,14 @@ def resp_process(resp_signal, sampling_rate=2000, method="khodadad2018", amp_min
     print("    -> [RESP] Calculating respiratory phase & amplitude...")
     phase = nk.rsp_phase(peak_signal, desired_length=len(resp_signal))
     amplitude = nk.rsp_amplitude(rsp_cleaned, peak_signal)
+    symmetry = nk.rsp_symmetry(rsp_cleaned, peak_signal)
+# =============================================================================
+#     rvt = nk.rsp_rvt(
+#         rsp_cleaned,
+#         sampling_rate=sampling_rate,
+#         silent=True,
+#     )
+# =============================================================================
     
     print("    -> [RESP] Calculating continuous breathing rate...")
     raw_rate = signal_rate(info["RSP_Troughs"], sampling_rate=sampling_rate, desired_length=len(resp_signal))
@@ -73,7 +81,7 @@ def resp_process(resp_signal, sampling_rate=2000, method="khodadad2018", amp_min
             "RSP_Artifact": combined_artifact_mask.astype(int) # Non-destructive tracker
         }
     )
-    signals = pd.concat([signals, phase, peak_signal], axis=1)
+    signals = pd.concat([signals, phase, symmetry, peak_signal], axis=1)
 
     print("    -> [RESP] Pipeline Complete!")
     return signals, info

@@ -113,7 +113,9 @@ def process_session(acq_filepath, eyelink_dir, include_thermistor = False):
         'unepoched_acq': un_acq,
         'unepoched_pupil': un_pupil,
         'acq_sync_index': pulse_acq,
-        'pupil_sync_index': pulse_pupil
+        'pupil_sync_index': pulse_pupil,
+        'fs_acq': acq_fs,
+        'fs_pupil': pupil_fs
     }
     
     return final_data
